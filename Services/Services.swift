@@ -37,43 +37,52 @@ final class Services {
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
-       
-//        dataTask?.cancel()
-        dataTask = urlSession.dataTask(with: urlRequest.url!) { [weak self] data, response, error in
-                var receivedFactData: FactData?
-
-                defer {
-                    self?.dataTask = nil
-                    completionHandler(receivedFactData)
-                }
-
-                if let error = error {
-
-                    self?.errorMessage += "DataTask error: " + error.localizedDescription + "\n"
-                    return
-
-                } else if
-                    let data = data,
-                    let response = response as? HTTPURLResponse,
-                    response.statusCode == 200 {
-
-                    let responseStrInISOLatin = String(data: data, encoding: String.Encoding.isoLatin1)
-                    guard let modifiedDataInUTF8Format = responseStrInISOLatin?.data(using: String.Encoding.utf8) else {
-                        return
-                    }
-                    do {
-
-                        let decoder = JSONDecoder()
-                        let model = try decoder.decode(FactData.self, from: modifiedDataInUTF8Format)
-                        receivedFactData = model
-
-                    } catch {
-                        print("Errors: \(error)")
-                    }
-                }
-
-            }
-            dataTask?.resume()
         
+        //        dataTask?.cancel()
+        dataTask = urlSession.dataTask(with: urlRequest.url!) { [weak self] data, response, error in
+            var receivedFactData: FactData?
+            
+            defer {
+                self?.dataTask = nil
+                completionHandler(receivedFactData)
+            }
+            
+            if let error = error {
+                
+                self?.errorMessage += "DataTask error: " + error.localizedDescription + "\n"
+                return
+                
+            } else if
+                let data = data,
+                let response = response as? HTTPURLResponse,
+                response.statusCode == 200 {
+                
+                let responseStrInISOLatin = String(data: data, encoding: String.Encoding.isoLatin1)
+                guard let modifiedDataInUTF8Format = responseStrInISOLatin?.data(using: String.Encoding.utf8) else {
+                    return
+                }
+                do {
+                    
+                    let decoder = JSONDecoder()
+                    let model = try decoder.decode(FactData.self, from: modifiedDataInUTF8Format)
+                    receivedFactData = model
+                    
+                } catch {
+                    print("Errors: \(error)")
+                }
+            }
+            
+        }
+        dataTask?.resume()
+        
+    }
+    
+    func obtainImageDataWithPath(imagePath: String, completionHandler: @escaping (Data?) -> Void) {
+        let url: URL! = URL(string: imagePath)
+        let task = urlSession.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else { return }
+            completionHandler(data)
+        }
+        task.resume()
     }
 }

@@ -22,17 +22,37 @@ final class ViewModel {
             delegate?.factDataUpdated()
         }
     }
+    var cache:NSCache<NSString, UIImage> = NSCache()
     
     func getFacts() {
         DispatchQueue.main.async {
-
-        Services.shared.getFactResults { (factData) in
-            guard let receivedData = factData, let title = factData?.title else {
-                return
+            
+            Services.shared.getFactResults { (factData) in
+                guard let receivedData = factData, let title = factData?.title else {
+                    return
+                }
+                self.title = title
+                self.facts = receivedData.rows
             }
-            self.title = title
-            self.facts = receivedData.rows
         }
+    }
+    func obtainImageWithPath(imagePath: String, completionHandler: @escaping (UIImage?) -> Void) {
+        if let image = self.cache.object(forKey: imagePath as NSString) {
+            DispatchQueue.main.async {
+                completionHandler(image)
+            }
+        } else {
+            Services.shared.obtainImageDataWithPath(imagePath: imagePath, completionHandler: {(data) in
+                guard let imageData = data else {
+                    return
+                }
+                if let image = UIImage(data: imageData) {
+                    self.cache.setObject(image, forKey: imagePath as NSString)
+                    DispatchQueue.main.async {
+                        completionHandler(image)
+                    }
+                }
+            })
         }
     }
 }

@@ -67,13 +67,13 @@ class ViewController: UIViewController {
 
         self.viewModel?.getFacts()
         
-        factTableView.reloadData()
+//        factTableView.reloadData()
 
     }
     
     @objc func pullToRefresh(sender:AnyObject) {
         self.viewModel?.getFacts()
-        factTableView.reloadData()
+//        factTableView.reloadData()
 
 
     }
@@ -100,7 +100,7 @@ class ViewController: UIViewController {
 
 extension ViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 50
+        return 100
     }
     public func numberOfSections(in tableView: UITableView) -> Int {
         return 1
@@ -111,18 +111,26 @@ extension ViewController: UITableViewDelegate {
 extension ViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        print(viewModel?.facts.count)
+        print(viewModel?.facts.count as Any)
         return viewModel?.facts.count ?? 0
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FactCell") as? UITableViewCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "FactCell") as? FactsTableViewCell
         
         
         let fact = viewModel?.facts[indexPath.row]
-        cell?.textLabel?.text =  fact?.title
-        cell?.detailTextLabel?.text = fact?.description
+        cell?.factTitle.text = fact?.title
+        cell?.factDesc.text = fact?.description
+        cell?.imgView.image = UIImage(named: "placeholder.png")
+        if let imagePath = fact?.imageHref {
+            viewModel.obtainImageWithPath(imagePath: imagePath) { image in
+                if let imageReceived = image, let updateCell = tableView.cellForRow(at: indexPath) as? FactsTableViewCell {
+                    updateCell.imgView.image = imageReceived
+                }
+            }
+        }
         return cell!
 
     }
@@ -131,8 +139,13 @@ extension ViewController: UITableViewDataSource {
 }
 
 extension ViewController: ViewModelDelegate {
-    
     func factDataUpdated() {
-        
+        DispatchQueue.main.async { [weak self] in
+            self?.factTableView.reloadData()
+            self?.navigationItem.title = self?.viewModel.title
+            self?.indicator.stopAnimating()
+            self?.indicator.hidesWhenStopped = true
+            self?.refreshControl.endRefreshing()
+        }
     }
 }
