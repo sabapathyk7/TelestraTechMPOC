@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     
-    private var viewModel: ViewModel?
+    private var viewModel: ViewModel!
     private var refreshControl = UIRefreshControl()
     
     let indicator:UIActivityIndicatorView = {
@@ -58,19 +58,22 @@ class ViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(ViewController.pullToRefresh(sender:)), for: .valueChanged)
         factTableView.addSubview(refreshControl)
         
-        
+        setupFactTableLayout()
+
         if self.viewModel == nil {
             self.viewModel = ViewModel()
         }
+
         self.viewModel?.getFacts()
         
-        setupFactTableLayout()
-
+        factTableView.reloadData()
 
     }
     
     @objc func pullToRefresh(sender:AnyObject) {
         self.viewModel?.getFacts()
+        factTableView.reloadData()
+
 
     }
     
@@ -100,6 +103,7 @@ extension ViewController: UITableViewDelegate {
 extension ViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        print(viewModel?.facts.count)
         return viewModel?.facts.count ?? 0
     }
     

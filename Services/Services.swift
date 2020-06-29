@@ -9,7 +9,7 @@
 import Foundation
 
 
-class Services {
+final class Services {
     
     //
     // MARK: - Constants
@@ -22,25 +22,23 @@ class Services {
     var dataTask: URLSessionDataTask?
     var errorMessage = ""
     
-    private let baseURL = "https://dl.dropboxusercontent.com/"
-    private let subURL = "s/2iodh4vg0eortkl/facts.json"
+    private let baseURL = "https://dl.dropboxusercontent.com/s/2iodh4vg0eortkl/facts.json"
     
     static public let shared: Services = Services()
     
     typealias FactResults = (FactData?) -> Void
     
     
-    func getFactResults(completionHandler: @escaping FactResults) {
+    func getFactResults( completionHandler: @escaping FactResults) {
         
         
-        let urlString = baseURL + subURL
+        let urlString = baseURL
         guard let url = URL(string: urlString) else { return }
         
         var urlRequest = URLRequest(url: url)
         urlRequest.httpMethod = "GET"
-        dataTask?.cancel()
        
-        
+//        dataTask?.cancel()
         dataTask = urlSession.dataTask(with: urlRequest.url!) { [weak self] data, response, error in
                 var receivedFactData: FactData?
 
