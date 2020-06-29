@@ -10,6 +10,8 @@ import UIKit
 
 class ViewController: UIViewController {
     
+    
+    private var viewModel: ViewModel!
     private var refreshControl = UIRefreshControl()
     
     let indicator:UIActivityIndicatorView = {
@@ -23,6 +25,17 @@ class ViewController: UIViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         return tableView
     }()
+    
+    init(viewModel: ViewModel) {
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+        self.viewModel.delegate = self
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -41,13 +54,13 @@ class ViewController: UIViewController {
         factTableView.addSubview(refreshControl)
         
         setupFactTableLayout()
-        
-        
-        
+        self.viewModel.getFacts()
+
     }
     
     @objc func pullToRefresh(sender:AnyObject) {
-       
+        self.viewModel.getFacts()
+
     }
     
     func setupFactTableLayout(){
@@ -56,14 +69,14 @@ class ViewController: UIViewController {
         view.addSubview(factTableView)
         
         indicator.center = self.factTableView.center
-        self.view.addSubview(indicator)
-        
-        
+        self.view.addSubview(indicator)        
     }
+    
+    
 }
 
 
-extension UIViewController: UITableViewDelegate {
+extension ViewController: UITableViewDelegate {
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 50
     }
@@ -73,7 +86,8 @@ extension UIViewController: UITableViewDelegate {
     
 }
 
-extension UIViewController: UITableViewDataSource {
+extension ViewController: UITableViewDataSource {
+    
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return 5
     }
@@ -81,11 +95,21 @@ extension UIViewController: UITableViewDataSource {
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
       
         let cell = tableView.dequeueReusableCell(withIdentifier: "FactCell") as? UITableViewCell
-        cell?.textLabel?.text =  "Saba"
-        cell?.detailTextLabel?.text = "Pathy"
+        
+        
+        let fact = viewModel.facts[indexPath.row]
+        cell?.textLabel?.text =  fact.title
+        cell?.detailTextLabel?.text = fact.description
         return cell!
 
     }
     
     
+}
+
+extension ViewController: ViewModelDelegate {
+    
+    func factDataUpdated() {
+        
+    }
 }

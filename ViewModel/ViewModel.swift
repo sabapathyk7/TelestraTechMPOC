@@ -9,10 +9,27 @@
 import Foundation
 import UIKit
 
-protocol VMDelegate: class {
-    
+protocol ViewModelDelegate: class {
+    func factDataUpdated()
 }
 
-class ViewModel {
-    public weak var delete: VMDelegate? 
+final class ViewModel {
+    public weak var delegate: ViewModelDelegate?
+    
+    var title: String = ""
+    var facts: [Facts] = [] {
+        didSet{
+            delegate?.factDataUpdated()
+        }
+    }
+    
+    func getFacts() {
+        Services.shared.getFactResults { (factData) in
+            guard let receivedData = factData, let title = factData?.pageTitle else {
+                return
+            }
+            self.title = title
+            self.facts = receivedData.rows
+        }
+    }
 }
