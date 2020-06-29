@@ -8,4 +8,11 @@
 
 import Foundation
 
+struct FactData: Codable {
+    let pageTitle: String?
+    var rows: [Facts]
+}
 
+struct Facts: Codable {
+    let title, description, imageHref: String?
+}
