@@ -59,6 +59,7 @@ class ViewController: UIViewController {
         factTableView.addSubview(refreshControl)
         
         setupFactTableLayout()
+        setLayoutConstraints()
 
         if self.viewModel == nil {
             self.viewModel = ViewModel()
@@ -85,7 +86,14 @@ class ViewController: UIViewController {
         indicator.center = self.factTableView.center
         self.view.addSubview(indicator)        
     }
-    
+    func setLayoutConstraints() {
+        factTableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        factTableView.topAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.topAnchor).isActive = true
+        factTableView.leftAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.leftAnchor).isActive = true
+        factTableView.rightAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.rightAnchor).isActive = true
+        factTableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor).isActive = true
+    }
     
 }
 
