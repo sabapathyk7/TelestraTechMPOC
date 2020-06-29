@@ -9,7 +9,7 @@
 import Foundation
 
 struct FactData: Codable {
-    let pageTitle: String?
+    let title: String?
     var rows: [Facts]
 }
 

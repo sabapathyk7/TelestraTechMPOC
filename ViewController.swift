@@ -11,7 +11,7 @@ import UIKit
 class ViewController: UIViewController {
     
     
-    private var viewModel: ViewModel!
+    private var viewModel: ViewModel?
     private var refreshControl = UIRefreshControl()
     
     let indicator:UIActivityIndicatorView = {
@@ -26,16 +26,21 @@ class ViewController: UIViewController {
         return tableView
     }()
     
-    init(viewModel: ViewModel) {
-        super.init(nibName: nil, bundle: nil)
-        self.viewModel = viewModel
-        self.viewModel.delegate = self
-    }
-    
-    
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+//           fatalError("init(coder:) has not been implemented")
+       }
+    
+    
+    init(viewModel: ViewModel) {
+        
+        super.init(nibName: nil, bundle: nil)
+        self.viewModel = viewModel
+        self.viewModel?.delegate = self
     }
+    
+    
+   
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,13 +58,19 @@ class ViewController: UIViewController {
         refreshControl.addTarget(self, action: #selector(ViewController.pullToRefresh(sender:)), for: .valueChanged)
         factTableView.addSubview(refreshControl)
         
+        
+        if self.viewModel == nil {
+            self.viewModel = ViewModel()
+        }
+        self.viewModel?.getFacts()
+        
         setupFactTableLayout()
-        self.viewModel.getFacts()
+
 
     }
     
     @objc func pullToRefresh(sender:AnyObject) {
-        self.viewModel.getFacts()
+        self.viewModel?.getFacts()
 
     }
     
@@ -89,7 +100,7 @@ extension ViewController: UITableViewDelegate {
 extension ViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
+        return viewModel?.facts.count ?? 0
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -97,9 +108,9 @@ extension ViewController: UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "FactCell") as? UITableViewCell
         
         
-        let fact = viewModel.facts[indexPath.row]
-        cell?.textLabel?.text =  fact.title
-        cell?.detailTextLabel?.text = fact.description
+        let fact = viewModel?.facts[indexPath.row]
+        cell?.textLabel?.text =  fact?.title
+        cell?.detailTextLabel?.text = fact?.description
         return cell!
 
     }

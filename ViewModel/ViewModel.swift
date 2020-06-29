@@ -24,12 +24,15 @@ final class ViewModel {
     }
     
     func getFacts() {
+        DispatchQueue.main.async {
+
         Services.shared.getFactResults { (factData) in
-            guard let receivedData = factData, let title = factData?.pageTitle else {
+            guard let receivedData = factData, let title = factData?.title else {
                 return
             }
             self.title = title
             self.facts = receivedData.rows
+        }
         }
     }
 }
