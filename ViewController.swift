@@ -64,11 +64,7 @@ class ViewController: UIViewController {
         if self.viewModel == nil {
             self.viewModel = ViewModel()
         }
-
         self.viewModel?.getFacts()
-        
-//        factTableView.reloadData()
-
     }
     
     @objc func pullToRefresh(sender:AnyObject) {
