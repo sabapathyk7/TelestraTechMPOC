@@ -28,7 +28,9 @@ final class Services {
     
     typealias FactResults = (FactData?) -> Void
     
-    
+    //
+    // MARK: Get Fact Results from the given API.
+    //
     func getFactResults( completionHandler: @escaping FactResults) {
         
         
@@ -47,6 +49,9 @@ final class Services {
                 completionHandler(receivedFactData)
             }
             
+             //
+            // Differentiate the responses and errors.
+           //
             if let error = error {
                 
                 self?.errorMessage += "DataTask error: " + error.localizedDescription + "\n"
@@ -64,6 +69,9 @@ final class Services {
                 do {
                     
                     let decoder = JSONDecoder()
+                    //
+                    // Decoder to decode the data into json format. Look at the model class to get more info.
+                    //
                     let model = try decoder.decode(FactData.self, from: modifiedDataInUTF8Format)
                     receivedFactData = model
                     
@@ -77,6 +85,9 @@ final class Services {
         
     }
     
+    //
+    // MARK: Obtaining the image path from the json feed. Will be used in the ViewModel class
+    //
     func obtainImageDataWithPath(imagePath: String, completionHandler: @escaping (Data?) -> Void) {
         let url: URL! = URL(string: imagePath)
         let task = urlSession.dataTask(with: url) { data, response, error in

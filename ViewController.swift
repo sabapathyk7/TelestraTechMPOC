@@ -10,26 +10,36 @@ import UIKit
 
 class ViewController: UIViewController {
     
-    
+    //
+    // MARK: - Variables and properties
+    //
     private var viewModel: ViewModel!
     private var refreshControl = UIRefreshControl()
     
+    //
+    // MARK: - Activity Indicator View
+    //
     let indicator:UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(frame: CGRect(x:0, y:0, width:60, height:60))
         indicator.style = .medium
         return indicator
     }()
     
+    //
+    // MARK: - TableView initialization
+    //
     let factTableView:UITableView = {
         let tableView = UITableView(frame: .zero, style: .plain)
         tableView.tableFooterView = UIView(frame: .zero)
         return tableView
     }()
     
+    //
+    // MARK: - Initialization of viewmodel class
+    //
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-//           fatalError("init(coder:) has not been implemented")
-       }
+    }
     
     
     init(viewModel: ViewModel) {
@@ -40,8 +50,9 @@ class ViewController: UIViewController {
     }
     
     
-   
-    
+    //
+    // MARK: - ViewController Lifecycle
+    //
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view.
@@ -60,21 +71,26 @@ class ViewController: UIViewController {
         
         setupFactTableLayout()
         setLayoutConstraints()
-
+        
         if self.viewModel == nil {
             self.viewModel = ViewModel()
         }
         self.viewModel?.getFacts()
     }
     
-    
+    //
+    // MARK: - Pull to Refresh the data
+    //
     @objc func pullToRefresh(sender:AnyObject) {
         self.viewModel?.getFacts()
-//        factTableView.reloadData()
-
-
+        //        factTableView.reloadData()
+        
+        
     }
     
+    //
+    // MARK: - Setting up the layout and constraints
+    //
     func setupFactTableLayout(){
         
         factTableView.frame = view.bounds
@@ -83,6 +99,7 @@ class ViewController: UIViewController {
         indicator.center = self.factTableView.center
         self.view.addSubview(indicator)        
     }
+    
     func setLayoutConstraints() {
         factTableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -94,17 +111,24 @@ class ViewController: UIViewController {
     
 }
 
-
+//
+// MARK: - Tableview Delegate
+//
 extension ViewController: UITableViewDelegate {
+    
     public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 100
     }
+    
     public func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
     
 }
 
+//
+// MARK: - Datasource
+//
 extension ViewController: UITableViewDataSource {
     
     public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -113,10 +137,8 @@ extension ViewController: UITableViewDataSource {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-      
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "FactCell") as? FactsTableViewCell
-        
-        
         let fact = viewModel?.facts[indexPath.row]
         cell?.factTitle.text = fact?.title
         cell?.factDesc.text = fact?.description
@@ -129,12 +151,12 @@ extension ViewController: UITableViewDataSource {
             }
         }
         return cell!
-
     }
-    
-    
 }
 
+//
+// MARK: - View Model Delegate
+//
 extension ViewController: ViewModelDelegate {
     func factDataUpdated() {
         DispatchQueue.main.async { [weak self] in

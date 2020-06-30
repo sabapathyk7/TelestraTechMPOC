@@ -9,11 +9,16 @@
 import Foundation
 import UIKit
 
+    //
+    // MARK: Delegate - communication between view and service.
+   //
 protocol ViewModelDelegate: class {
     func factDataUpdated()
 }
 
 final class ViewModel {
+    
+    
     public weak var delegate: ViewModelDelegate?
     
     var title: String = ""
@@ -24,6 +29,9 @@ final class ViewModel {
     }
     var cache:NSCache<NSString, UIImage> = NSCache()
     
+    //
+    // MARK: Fetching fact data from the json feed.
+    //
     func getFacts() {
         DispatchQueue.main.async {
             
@@ -36,12 +44,20 @@ final class ViewModel {
             }
         }
     }
+    
+        //
+       // MARK: Retrieved the images from the json feed and used asynchrously download images.
+      //
     func obtainImageWithPath(imagePath: String, completionHandler: @escaping (UIImage?) -> Void) {
+        
         if let image = self.cache.object(forKey: imagePath as NSString) {
+           
             DispatchQueue.main.async {
                 completionHandler(image)
             }
+            
         } else {
+            
             Services.shared.obtainImageDataWithPath(imagePath: imagePath, completionHandler: {(data) in
                 guard let imageData = data else {
                     return
@@ -53,6 +69,7 @@ final class ViewModel {
                     }
                 }
             })
+            
         }
     }
 }

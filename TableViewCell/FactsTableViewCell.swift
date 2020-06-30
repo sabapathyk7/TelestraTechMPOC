@@ -10,6 +10,9 @@ import UIKit
 
 class FactsTableViewCell: UITableViewCell {
     
+    //
+    // MARK: - Variables and properties
+    //
     let imgView:UIImageView = {
         let img = UIImageView()
         img.contentMode = .scaleAspectFill // image will never be strecthed vertially or horizontally
@@ -27,6 +30,7 @@ class FactsTableViewCell: UITableViewCell {
         return label
     }()
     
+    
     let factDesc:UILabel = {
         let label = UILabel()
         label.font = UIFont.boldSystemFont(ofSize: 10)
@@ -37,6 +41,10 @@ class FactsTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
+    //
+    // MARK: - Container View
+    //
     let containerView:UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -44,6 +52,9 @@ class FactsTableViewCell: UITableViewCell {
         return view
     }()
     
+    //
+    // MARK: Initiating the tableview and it's cell. Adding layout constraints for each attributes in the cell.
+    //
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -52,6 +63,9 @@ class FactsTableViewCell: UITableViewCell {
         containerView.addSubview(factDesc)
         self.contentView.addSubview(containerView)
         
+        //
+        // Constraints
+        //
         self.preservesSuperviewLayoutMargins = true
         self.contentView.preservesSuperviewLayoutMargins = true
         
