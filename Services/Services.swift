@@ -49,9 +49,9 @@ final class Services {
                 completionHandler(receivedFactData)
             }
             
-             //
+            //
             // Differentiate the responses and errors.
-           //
+            //
             if let error = error {
                 
                 self?.errorMessage += "DataTask error: " + error.localizedDescription + "\n"
@@ -95,5 +95,12 @@ final class Services {
             completionHandler(data)
         }
         task.resume()
+    }
+    
+    func cancelFetchFeeds() {
+        if dataTask != nil {
+            dataTask?.cancel()
+        }
+        dataTask = nil
     }
 }

@@ -21,7 +21,12 @@ class ViewController: UIViewController {
     //
     let indicator:UIActivityIndicatorView = {
         let indicator = UIActivityIndicatorView(frame: CGRect(x:0, y:0, width:60, height:60))
-        indicator.style = .medium
+        if #available(iOS 13.0, *) {
+            indicator.style = .medium
+            
+        } else {
+            indicator.style = .gray
+        }
         return indicator
     }()
     
